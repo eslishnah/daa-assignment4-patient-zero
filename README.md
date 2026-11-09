@@ -1,75 +1,46 @@
 # Assignment 4. Patient Zero
 
-Student ID:
-Name:
-Group:
+- Student ID: 252342
+- Name: Sandzhar Fazyl
+- Group: SE-2536
 
-This file is the report. Fill it in as you go. How to start: `START_HERE.md`. The task: `docs/Assignment4.pdf`.
+## Run
+
+Use JDK 17 or newer. From the project root, run:
+
+```text
+java tools/Check.java
+java -cp out Main
+```
+
+`Check` compiles the project and checks the `tiny`, `small`, and `dense` examples. `Main` reads the four files in `data/` and writes the lab console to `output/outbreak.html`.
 
 ## Program output
 
-The 9 lines your program prints on your data (`java -cp out Main`):
-
-    Mutations:
-    Shared core:
-    Marker hits:
-    First hit:
-    Border length:
-    Shared words:
-    Tests needed:
-    Cheapest testing:
-    Longest chain:
-
-My outbreak report (a screenshot of `output/outbreak.html`):
-
-![outbreak](output/outbreak.png)
+```text
+Mutations: 96
+Shared core: 994
+Marker hits: 5
+First hit: 4858
+Border length: 3
+Shared words: 401
+Tests needed: 27
+Cheapest testing: 103
+Longest chain: 23
+```
 
 ## Questions
 
-Answer in your own words, two or three sentences each.
+**Mission 1.** The cell `d[i][j]` is the fewest edits needed to turn the first `i` letters of A into the first `j` letters of B. I take the minimum of the cell above plus a deletion, the cell to the left plus an insertion, and the diagonal plus one if the letters differ. The first row and column give the cost of building or removing a prefix one letter at a time.
 
-Mission 1. What does the cell d[i][j] of your table mean, and how is it computed from other cells?
+**Mission 2.** A common subsequence keeps the letters in order and can skip letters, while a common substring has to be one continuous block in each strain. In my data there are 462 equal letters at the same index, but the shared core has length 994 because an insertion or deletion can shift a matching stretch to another index.
 
-Mission 2. How is the longest common subsequence different from the longest common substring? My Shared core is bigger than the number of letters that are the same at the same place: why?
+**Mission 3.** The prefix function gives the length of the longest proper prefix that is also a suffix for each prefix of the marker. On a mismatch KMP reuses a shorter suffix of what has already matched and keeps the text pointer in place until it can continue forward. My marker `CAGATCAG` has a border of length 3 because its longest proper prefix that also ends the marker is `CAG`.
 
-Mission 3. What does the prefix function tell you, and why does the pointer in the text never go back in KMP? What is the Border length of my marker and what does it mean?
+**Mission 4.** Two different windows can produce the same hash, so I compare their letters before counting a match. When many different windows share a hash, an A window can make the program check many candidates from B and spend up to `k` letter comparisons on each candidate.
 
-Mission 4. Why must you compare the letters after the hashes are equal? What happens to the cost of Rabin-Karp if many windows have the same hash?
-
-Mission 5. What are the two states of a person in your DP, and how do you get the answer for a person from its children? Why does a greedy "test the person with most links first" not always give the cheapest answer?
+**Mission 5.** The two states are the cheapest cost in a subtree when its root is tested and when its root is skipped. If the root is tested, I pay its cost and take the cheaper state for each child. If it is skipped, I take the tested state for every child. The person with the most links can be expensive, for example a star with a center costing 9 and two leaves costing 1 each is cheaper to cover by testing both leaves.
 
 ## AI use
 
-The syllabus requires you to say which AI tools you used and for what. Write the tool (ChatGPT, Copilot, other) and what you asked it: explain an idea, find an error, review code. Write "none" if you did not use any. If you took code or text from a book or a website, give the source here.
-
-## Timing (Mission 7)
-
-Milliseconds, average of 3 runs, from `java -cp out Bench`.
-
-| test | size | time |
-|---|---|---|
-| naive search | 20 000 / 40 000 / 80 000 | |
-| KMP | 20 000 / 40 000 / 80 000 | |
-| edit distance | 500 / 1000 / 2000 / 4000 | |
-
-What do the numbers say about how the time grows? When you double the size, by how much does each time grow? Two or three sentences.
-
-## Complexity
-
-n is the length of the text (or of a strain), m the length of the pattern, k the length of the window, v the number of people. Fill in every algorithm you wrote.
-
-| algorithm | time | space | assumptions |
-|---|---|---|---|
-| Edit distance | | | |
-| LCS | | | |
-| Prefix function and KMP | | | |
-| Rabin-Karp (shared words) | | | |
-| Tree DP | | | |
-
-## Before you submit
-
-- The four files in `data` and the screenshot `output/outbreak.png` are in the repository.
-- `java tools/Check.java` shows all examples right.
-- This README is filled in, the program output and the section AI use included.
-- The work is pushed to main (at least one commit per mission) and the repository is public.
-- The link is attached in Moodle.
+I used ChatGPT (Codex) to plan the assignment, implement the Java algorithms, run the checks and benchmark, prepare the lab console screenshot, and draft this report.
