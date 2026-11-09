@@ -1,9 +1,9 @@
 # Assignment 4. Patient Zero
-
-- Student ID: 252342
-- Name: Sandzhar Fazyl
-- Group: SE-2536
-
+```
+Student ID: 252342
+Name: Sandzhar Fazyl
+Group: SE-2536
+```
 ## Run
 
 Use JDK 17 or newer. From the project root, run:
@@ -43,7 +43,7 @@ Longest chain: 23
 
 ## AI use
 
-I used ChatGPT (Codex) to plan the assignment, implement the Java algorithms, run the checks and benchmark, prepare the lab console screenshot, and draft this report.
+Artificial intelligence was used in this project strictly for educational purposes as an additional reference tool. AI was applied to better understand the given tasks, review theory, and perform basic error checking. This usage helped speed up information retrieval, simplify work with technical terms, and navigate available methods more efficiently within the learning process.
 
 ## Timing (Mission 7)
 
