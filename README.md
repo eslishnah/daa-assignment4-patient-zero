@@ -39,8 +39,43 @@ Longest chain: 23
 
 **Mission 4.** Two different windows can produce the same hash, so I compare their letters before counting a match. When many different windows share a hash, an A window can make the program check many candidates from B and spend up to `k` letter comparisons on each candidate.
 
-**Mission 5.** The two states are the cheapest cost in a subtree when its root is tested and when its root is skipped. If the root is tested, I pay its cost and take the cheaper state for each child. If it is skipped, I take the tested state for every child. The person with the most links can be expensive, for example a star with a center costing 9 and two leaves costing 1 each is cheaper to cover by testing both leaves.
+**Mission 5.** The two states are the cheapest cost in a subtree when its root is tested and when its root is skipped. If the root is tested, I pay its cost and take the cheaper state for each child, while skipping the root forces every child to be tested. In a star with a center costing 9 and two leaves costing 1 each, testing both leaves is cheaper than testing the person with the most links.
 
 ## AI use
 
 I used ChatGPT (Codex) to plan the assignment, implement the Java algorithms, run the checks and benchmark, prepare the lab console screenshot, and draft this report.
+
+## Timing (Mission 7)
+
+Windows, JDK 25.0.2. Each measurement is the average of three runs from `java -cp out Bench`.
+
+| Test | Input size | Time (ms) |
+|---|---:|---:|
+| Naive search | 20,000 | 144.9 |
+| Naive search | 40,000 | 235.2 |
+| Naive search | 80,000 | 448.4 |
+| KMP | 20,000 | 6.5 |
+| KMP | 40,000 | 3.6 |
+| KMP | 80,000 | 1.1 |
+| Edit distance | 500 | 18.1 |
+| Edit distance | 1,000 | 20.9 |
+| Edit distance | 2,000 | 61.3 |
+| Edit distance | 4,000 | 236.7 |
+
+With the marker length fixed, doubling the text multiplied the naive search time by 1.62 and then 1.91. KMP took only a few milliseconds, and the times decreased across the three sizes, likely because the JVM was still warming up. The edit distance time grew by factors of 1.15, 2.93, and 3.86, with the last doubling close to the fourfold growth of the DP table.
+
+## Complexity
+
+`n` and `m` are the lengths of the two strings. For KMP, `m` is the marker length and `h` is the number of hits. For Rabin-Karp, `k` is the window length, `wA` and `wB` count the windows in A and B, and `c` counts the candidate window pairs compared. `v` is the number of people in the tree.
+
+| Algorithm | Time | Extra space | Assumptions |
+|---|---|---|---|
+| Edit distance | O(nm) | O(nm) | Full table, constant work per cell. |
+| LCS | O(nm) | O(nm) | Full table, constant work per cell. |
+| Prefix function and KMP | O(n + m) | O(m + h) | Includes the prefix array and the list of all hit positions. |
+| Rabin-Karp | O(n + m + kc) with expected constant-time hash lookups. Worst case O(n + m + k × wA × wB). | O(wB) | A rolling update is O(1). Exact verification takes up to O(k) per candidate pair. |
+| Tree DP and longest chain | O(v) | O(v) | The tree has v − 1 edges. Space includes the DP arrays, result, and recursion stack. |
+
+## Lab console
+
+![Lab console showing all five missions passed](output/outbreak.png)
