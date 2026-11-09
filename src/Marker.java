@@ -4,6 +4,8 @@ import java.util.*;
  * Missions 3 and 4. Find a word in a long text.
  */
 public class Marker {
+    private static final long BASE = 257;
+    private static final long MOD = 1_000_000_007;
 
     /**
      * Mission 3a. The prefix function of p. pi[i] = the length of the longest proper prefix of p[0..i] that is
@@ -66,7 +68,61 @@ public class Marker {
      * Example: a = "ACGTAC", b = "TTACGT", k = 4: the words of a are ACGT, CGTA, GTAC; only ACGT is in b, so the answer is 1.
      */
     public static int sharedWords(String a, String b, int k) {
-        // TODO Mission 4
-        return -1;
+        if (k <= 0 || k > a.length() || k > b.length()) {
+            return 0;
+        }
+        long leadingPower = 1;
+        for (int i = 1; i < k; i++) {
+            leadingPower = leadingPower * BASE % MOD;
+        }
+
+        Map<Long, List<Integer>> windowsInB = new HashMap<>();
+        long hash = firstWindowHash(b, k);
+        for (int j = 0; j <= b.length() - k; j++) {
+            windowsInB.computeIfAbsent(hash, key -> new ArrayList<>()).add(j);
+            if (j + k < b.length()) {
+                hash = slideHash(hash, b.charAt(j), b.charAt(j + k), leadingPower);
+            }
+        }
+
+        int count = 0;
+        hash = firstWindowHash(a, k);
+        for (int i = 0; i <= a.length() - k; i++) {
+            List<Integer> candidates = windowsInB.get(hash);
+            if (candidates != null) {
+                for (int j : candidates) {
+                    if (sameWindow(a, i, b, j, k)) {
+                        count++;
+                        break;
+                    }
+                }
+            }
+            if (i + k < a.length()) {
+                hash = slideHash(hash, a.charAt(i), a.charAt(i + k), leadingPower);
+            }
+        }
+        return count;
+    }
+
+    private static long firstWindowHash(String text, int k) {
+        long hash = 0;
+        for (int i = 0; i < k; i++) {
+            hash = (hash * BASE + text.charAt(i)) % MOD;
+        }
+        return hash;
+    }
+
+    private static long slideHash(long hash, char outgoing, char incoming, long leadingPower) {
+        long suffix = (hash - outgoing * leadingPower % MOD + MOD) % MOD;
+        return (suffix * BASE + incoming) % MOD;
+    }
+
+    private static boolean sameWindow(String a, int i, String b, int j, int k) {
+        for (int offset = 0; offset < k; offset++) {
+            if (a.charAt(i + offset) != b.charAt(j + offset)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
